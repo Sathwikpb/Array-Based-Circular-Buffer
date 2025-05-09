@@ -60,7 +60,7 @@ void initBuffer(CBUF *cb)
     cb->count=0;
 }
 
-bool isFUll(CBUF *cb)
+bool isFull(CBUF *cb)
 {
     return (cb->count==BUFFER_SIZE);
 }
@@ -68,5 +68,86 @@ bool isFUll(CBUF *cb)
 bool isEmpty(CBUF *cb)
 {
     return (cb->count==0);
+
+}
+
+bool enqueue(CBUF *cb, int data)
+
+{
+    if(isFull(cb))
+    {
+        printf("Buffer is FUll. Cannot Enqueue %d\n",data);
+        return false;
+    }
+    cb->buffer[cb->tail]=data;
+    cb->tail=(cb->tail+1)%BUFFER_SIZE;
+    cb->count++;
+    printf("Enqueued %d\n",data);
+    return true;
+
+}
+
+bool dequeue(CBUF *cb , int *data)
+{
+    if(isEmpty(cb))
+{
+    printf("Buffer is Empty. Cannot Dequeue\n");
+    return false;
+
+}
+    *data=cb->buffer[cb->head];
+    cb->head=(cb->head+1)%BUFFER_SIZE;
+    cb->count--;
+    printf("Dequeued %d\n",*data);
+    return true;
+}
+
+bool peek(CBUF *cb, int *data)
+{
+    if(isEmpty(cb))return false;
+    *data=cb->buffer[cb->head];
+    printf("Peeked %d\n",*data);
+    return true;
+
+}
+
+
+int main()
+
+{
+    CBUF cb;
+    initBuffer(&cb);
+    int data;
+    enqueue(&cb, 1);
+    enqueue(&cb, 2);
+    enqueue(&cb, 3);
+    enqueue(&cb, 4);
+    enqueue(&cb, 5);
+    enqueue(&cb, 6); // This should fail as the buffer is full
+    dequeue(&cb, &data);
+    dequeue(&cb, &data);
+    enqueue(&cb, 6);
+    enqueue(&cb, 7);
+    dequeue(&cb, &data);
+    dequeue(&cb, &data);
+    dequeue(&cb, &data);
+    dequeue(&cb, &data);
+    dequeue(&cb, &data); // This should fail as the buffer is empty
+    enqueue(&cb, 8);
+    enqueue(&cb, 9);
+    enqueue(&cb, 10);       
+    enqueue(&cb, 11); // This should fail as the buffer is full
+    peek(&cb, &data); // Peek the front element
+    dequeue(&cb, &data);
+    dequeue(&cb, &data);
+    dequeue(&cb, &data);
+    dequeue(&cb, &data);
+
+    dequeue(&cb, &data); // This should fail as the buffer is empty
+    enqueue(&cb, 12);
+    enqueue(&cb, 13);
+    enqueue(&cb, 14);
+
+    return 0;
     
 }
